@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="./style.css" rel="stylesheet" type="text/css" />
+    <title>Document</title>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Movie List</a>
+            <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+            >
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item active">
+                <a class="nav-link" href="#">
+                    Home
+                    <span class="visually-hidden">(current)</span>
+                </a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="favorite.html">Favorite</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Content -->
+    <div class="container mt-5">
+        <!-- search bar -->
+        <form class="row" id="search-form">
+            <div class="col-4">
+                <label class="visually-hidden" for="specificSizeInputName">Search Keyword</label>
+                <input type="text" class="form-control mb-2 mr-sm-2" id="search-input" placeholder="Keyword...">
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-primary mb-2" id="search-submit-btn">Search</button>
+            </div>
+        </form>
+        <div class="row mt-5" id="data-panel">
+            <!-- Render Movies' Data -->
+        </div>
+    </div>
+    <!-- Pagenation -->
+    <nav aria-label="Page navigation example" class="mt-5">
+        <ul class="pagination justify-content-center" id="pagenation"></ul>
+    </nav>
+    <!-- Modal -->
+    <div class="modal fade" id="movie-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="movie-modal-title">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="movie-modal-body">
+                    <div class="row">
+                        <div class="col-sm-8" id="movie-modal-image">
+                        </div>
+                        <div class="col-sm-4" id="movie-modal-info">
+                            <!-- em是強調的意思，大部分瀏覽器的強調是「斜體」 -->
+                            <p><em id="movie-modal-date">Release Date : 2022/01/01</em></p>
+                            <p id="movie-modal-description">This is a movie!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 載入 -->
+    <script src="https://unpkg.com/axios@1.0.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="./main.js"></script>
+</body>
+</html>
