@@ -176,5 +176,31 @@ moviesPanel.addEventListener('click', function clickMoreInfo(event){
   }
 })
 
+modePanel.addEventListener("click", function clickModeBtn(event) {
+  const classList = event.target.classList;
+  if (classList.contains("card-mode")) {
+    mode = "card-mode";
+    cardModeBtn.classList.add("mode-active");
+    listModeBtn.classList.remove("mode-active");
+  }
+  if (classList.contains("list-mode")) {
+    mode = "list-mode";
+    listModeBtn.classList.add("mode-active");
+    cardModeBtn.classList.remove("mode-active");
+  }
+  renderMovies(getMoviesByPage(currPage));
+});
+
+paginator.addEventListener('click', function onPaginatorClicked (event){
+  const data = movies;
+  let target = event.target
+  if (event.target.classList.contains('outside-scope')){
+    target = event.target.firstElementChild.firstElementChild
+  }
+  desideNumOfPage(target, data)
+  renderPageItemStatus(currPage);
+  renderMovies(getMoviesByPage(currPage));
+})
+
 renderMovies(getMoviesByPage(currPage))
 renderPaginator(movies.length)
