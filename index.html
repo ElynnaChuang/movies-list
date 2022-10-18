@@ -4,61 +4,61 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link href="./style.css" rel="stylesheet" type="text/css" />
+    <script src="https://kit.fontawesome.com/1921cdc2c9.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">    <link href="./style.css" rel="stylesheet" type="text/css" />
     <title>Document</title>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Movie List</a>
-            <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-            >
+    <!-- Nav -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Movies List</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item active">
-                <a class="nav-link" href="#">
-                    Home
-                    <span class="visually-hidden">(current)</span>
-                </a>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
                 </li>
                 <li class="nav-item">
-                <a class="nav-link" href="favorite.html">Favorite</a>
+                    <a class="nav-link" aria-current="page" href="#">Favorite</a>
                 </li>
             </ul>
         </div>
-    </nav>
-    <!-- Content -->
-    <div class="container mt-5">
-        <!-- search bar -->
-        <form class="row" id="search-form">
-            <div class="col-4">
-                <label class="visually-hidden" for="specificSizeInputName">Search Keyword</label>
-                <input type="text" class="form-control mb-2 mr-sm-2" id="search-input" placeholder="Keyword...">
-            </div>
-            <div class="col">
-                <button type="submit" class="btn btn-primary mb-2" id="search-submit-btn">Search</button>
-            </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+<!-- Search Bar -->
+    <div class="row">
+        <form class="d-flex col-6" id="search-panel">
+            <input class="form-control me-2" id="search-input" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-primary" id="search-submit" type="submit">Search</button>
         </form>
-        <div class="row mt-5" id="data-panel">
-            <!-- Render Movies' Data -->
+        <div class="d-flex col mode-control" id="mode-panel">
+            <div class="mode-btn card-mode mode-active" id="card-mode-btn">
+                <i class="fa-solid fa-table-cells-large card-mode"></i>
+            </div>
+            <div class="mode-btn list-mode" id="list-mode-btn">
+                <i class="fa-solid fa-list list-mode"></i>
+            </div>
         </div>
     </div>
-    <!-- Pagenation -->
-    <nav aria-label="Page navigation example" class="mt-5">
-        <ul class="pagination justify-content-center" id="pagenation"></ul>
-    </nav>
-    <!-- Modal -->
+    <!-- Movies -->
+    <div class="row mt-5" id="movies-panel">
+    <!-- Display Movies Here-->
+    </div>
+</div>
+
+
+<!-- Pagination -->
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center" id="paginator">
+    </ul>
+</nav>
+
+<!-- Modal -->
     <div class="modal fade" id="movie-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">

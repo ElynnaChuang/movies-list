@@ -1,51 +1,80 @@
-const baseURL = 'https://movie-list.alphacamp.io'
-const indexURL = baseURL + '/api/v1/movies/'
-const posterURL = baseURL + '/posters/'
-const moviePerPage = 12
-const movies = []
-let searchResults = [] //存放搜尋出的結果
-const dataPanel = document.querySelector('#data-panel')
-const searchForm = document.querySelector('#search-form')
-const searchInput = document.querySelector('#search-input')
-const paginator = document.querySelector('#pagenation')
+const baseURL = "https://movie-list.alphacamp.io/";
+const moviesURL = baseURL + "api/v1/movies/";
+const posterURL = baseURL + "posters/";
+const moviesPanel = document.querySelector("#movies-panel");
+const searchInput = document.querySelector("#search-input");
+const searchPanel = document.querySelector("#search-panel");
+const modePanel = document.querySelector("#mode-panel");
+const cardModeBtn = document.querySelector("#card-mode-btn");
+const listModeBtn = document.querySelector("#list-mode-btn");
+const paginator = document.querySelector("#paginator");
+const movies = [];
+let searchResults = [];
+let searchHistory = [];
+const moviePerPage = 12;
+let currPage = 1;
+let mode = "card-mode";
 
 
-function renderMoviesList(data){
-  let rawHTML = ''
-  //因為傳進來的data會是陣列，所以可以用forEach處理
-  data.forEach(item => {
-    // 需要item.title & item.image & item.id(下列id的方法為「dataset」)
-    rawHTML += `
-    <div class="col-sm-3">
-      <div class="mb-2">
-        <div class="card">
-          <img src= "${posterURL+item.image}" class="card-img-top" alt="Movie Poster">
-          <div class="card-body">
-              <h5 class="card-title">${item.title}</h5>
-          </div>
-          <div class="card-footer">
-              <button class="btn btn-primary btn-more-info" data-bs-toggle="modal" data-bs-target="#movie-modal"
-              data-id="${item.id}">More</button>
-              <button class="btn btn-info btn-add-favorite" data-id="${item.id}">+</button>
+function renderMovies(data) {
+  if (!data) return;
+  let rawHTML = "";
+  if (mode === "card-mode") {
+    data.forEach((el) => {
+      rawHTML += `
+      <div class="col-sm-3">
+        <div class="mb-5">
+          <div class="card">
+            <a href="#" class="d-flex btn add-to-favorite add-to-favorite-in-card" data-id="${
+              el.id
+            }">
+              <i class="${isInFavorite(el)}" data-id="${el.id}"></i>
+            </a>
+            <img src=${posterURL}${el.image} class="card-img-top more-info" alt="..." data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${el.id}">
+            <div class="card-body" data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${el.id}">
+              <h5 class="card-title">${el.title}</h5>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    `
-  });
-  dataPanel.innerHTML = rawHTML
+      `;
+    });
+  }
+  if (mode === "list-mode") {
+    rawHTML += `
+    <ul class="list-group list-group-flush">
+    `;
+    data.forEach((el) => {
+      rawHTML += `
+        <li class="list-group-item">
+          <div class="container">
+            <div class="row align-items-center">
+              <div class="col">${el.title}</div>
+                <div class="col text-end">
+                  <a href="#" class=" btn more-info more-info-in-list" data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${el.id}">
+                    <i class="fa-solid fa-info more-info" data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${el.id}"></i>
+                  </a>
+                  <a href="#" data-id="${el.id}" class="btn add-to-favorite add-to-favorite-in-list">
+                    <i data-id="${el.id}" class="${isInFavorite(el)}"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </li>
+      `;
+    });
+    rawHTML += `
+    </ul>
+    `;
+  }
+  moviesPanel.innerHTML = rawHTML;
 }
 
-function renderPaginator(amount){
-  // amount = total movies = 80  // 80 /12 = 6 ... 8 (6 + 1 = 7)
-  const numOFPage = Math.ceil(amount / moviePerPage)
-  let rawHTML = ''
-  for (i = 1 ; i <= numOFPage ; i++){
-    rawHTML += `
-      <li class="page-item"><a class="page-link" href="#" data-page = "${i}">${i}</a></li>
-    `
-  }
-  paginator.innerHTML = rawHTML
+function isInFavorite(data) {
+  const favoriteList = JSON.parse(localStorage.getItem("favoriteMovies")) || [];
+  const status = favoriteList.some((movie) => movie.id === data.id);
+  if (status) return "fa-solid fa-heart add-to-favorite";
+  return "fa-regular fa-heart add-to-favorite";
 }
 
 function getMoviesByPage(page){
@@ -57,6 +86,53 @@ function getMoviesByPage(page){
   // page = 3 (movies[24] ~ movies[35])
   const startIndex = (page - 1) * moviePerPage
   return data.slice(startIndex, startIndex + moviePerPage) //!最後一個不會包含
+}
+
+function renderPaginator(amount){
+  // amount = total movies = 80  // 80 /12 = 6 ... 8 (6 + 1 = 7)
+  const pageAmmt = Math.ceil(amount / moviePerPage)
+  let rawHTML = `
+    <li class="page-control">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">
+          <i class="fa-solid fa-chevron-left pageMinus"></i>
+        </span>
+      </a>
+    </li>
+    <li class="page-item active" data-page="1">
+      <a class="page-link" href="#" data-page="1">1</a>
+    </li>
+  `;
+  for (let page = 2; page <= pageAmmt; page++) {
+    rawHTML += `
+    <li class="page-item" data-page="${page}">
+      <a class="page-link" href="#" data-page="${page}">${page}</a>
+    </li>
+      `;
+  }
+  rawHTML += `
+    <li class="page-control">
+      <a class="page-link" href="#" aria-label="Next">
+        <span aria-hidden="true">
+          <i class="fa-solid fa-chevron-right pagePlus"></i>
+        </span>
+      </a>
+    </li>
+  `;
+  paginator.innerHTML = rawHTML;
+}
+
+function renderPageItemStatus(page) {
+  const allPageItems = [...document.querySelectorAll(".page-item")];
+  allPageItems.forEach((item) => {
+    if (item.classList.contains("active")) {
+      item.classList.remove("active");
+    }
+  });
+  const activePage = allPageItems.find(
+    (item) => Number(item.dataset.page) === page
+  );
+  activePage.classList.add("active");
 }
 
 function showMovieModal(id){
@@ -77,7 +153,7 @@ function showMovieModal(id){
 function addToFavorite(id){
   //當function被呼叫時list會等於左或右邊，左邊為有清單，右邊為沒有，回傳兩者其一為T的，若兩者皆T，則左邊優先
   //localStorage本身存的是字串，所以取出時要用JSON.parse()，將 JSON 格式的字串轉回 JavaScript 原生物件
-  const list = JSON.parse(localStorage.getItem('favoriteMovies')) || []
+  const favoriteList = JSON.parse(localStorage.getItem("favoriteMovies")) || [];
 
   //find()參數跟filter一樣為函式，為T，則執行，左邊movie是函式本身的參數，右邊id為addToFavorite(id)的id
   //find()回傳值為元素本身（例如：下面的movies.find，回傳值為movies裡符合條件的元素）
@@ -85,16 +161,41 @@ function addToFavorite(id){
   const favoriteMovies = movies.find(movie => movie.id === id)
 
   //some()回傳值為T or F
-  //若list裡的陣列的id === 點擊項目的id，則return alert()
-  if(list.some(movie => movie.id === id)) {
-    return alert('此電影已經加入過收藏清單了！')
+  const target = event.target;
+  if (favoriteList.some((movie) => movie.id === id)) {
+    const deleteMovie = favoriteList.find((movie) => movie.id === id);
+    const index = favoriteList.indexOf(deleteMovie);
+    favoriteList.splice(index, 1);
+  } else {
+    favoriteList.push(favoriteMovies);
   }
-  list.push(favoriteMovies)
-  localStorage.setItem('favoriteMovies', JSON.stringify(list))
+  favoriteIconStatus(target);
+  localStorage.setItem("favoriteMovies", JSON.stringify(favoriteList));
+}
+
+function favoriteIconStatus(target) {
+  const tagName = target.tagName;
+  if (tagName === "I") {
+    const classList = target.classList;
+    if (classList.contains("fa-regular")) {
+      target.className = "fa-solid fa-heart add-to-favorite";
+    } else {
+      target.className = "fa-regular fa-heart add-to-favorite";
+    }
+  }
+  if (tagName === "A") {
+    const classList = target.firstElementChild.classList;
+    if (classList.contains("fa-regular")) {
+      target.firstElementChild.className = "fa-solid fa-heart add-to-favorite";
+    } else {
+      target.firstElementChild.className =
+        "fa-regular fa-heart add-to-favorite";
+    }
+  }
 }
 
 
-axios.get(indexURL)
+axios.get(moviesURL)
 .then(response =>{
   const data = response.data.results
   // --- 步驟一：將得到的電影資料塞進movies[]
@@ -106,30 +207,41 @@ axios.get(indexURL)
   movies.push(...data)
   // --- 步驟二：將movies[]的資料用function render出來
   renderPaginator(movies.length)
-  renderMoviesList(getMoviesByPage(1))
+  renderMovies(getMoviesByPage(1))
 })
 .catch( (error) => console.log(error));
 
-dataPanel.addEventListener('click', function (event){
-  if(event.target.matches('.btn-more-info')) {
+moviesPanel.addEventListener('click', function (event){
+  if(event.target.classList.contains("more-info")) {
     //showMovieModal(id) 需要id是數字，但dataset裡的id是字串，所以需要轉換
     showMovieModal(Number(event.target.dataset.id))
-  }else if(event.target.matches('.btn-add-favorite')) {
+  }else if(event.target.classList.contains("add-to-favorite")) {
     addToFavorite(Number(event.target.dataset.id))
   }
 })
 
 paginator.addEventListener('click', function onPaginatorClicked (event){
-  const page = Number(event.target.dataset.page)
-  if (event.target.tagName !== "A") {return}
-  renderMoviesList(getMoviesByPage(page))
+  const data = searchResults.length ? searchResults : movies;
+  if (event.target.tagName === "A") {
+    currPage = Number(event.target.dataset.page);
+  }
+  if (event.target.classList.contains("pagePlus")) {
+    if (currPage >= Math.ceil(data.length / moviePerPage)) return;
+    currPage += 1;
+  }
+  if (event.target.classList.contains("pageMinus")) {
+    if (currPage <= 1) return;
+    currPage -= 1;
+  }
+  renderPageItemStatus(currPage);
+  renderMovies(getMoviesByPage(currPage));
 })
 
 //submit 改 input 即可變成即時顯示結果
-searchForm.addEventListener('submit', function searchSubmit(event){
+searchPanel.addEventListener('submit', function searchSubmit(event){
   event.preventDefault() //請瀏覽器不要做預設的動作(因瀏覽器在感應到sumbit時，預設會重整，所以下方的console結果只會閃現一下)
   const keyWord = searchInput.value.trim().toLowerCase()
-
+  searchHistory = searchResults.slice(0);
   //過濾空白關鍵字，但後續拿掉，這樣查詢一次後，把輸入結果拿掉後按搜尋才可以回到全部
   // if(!keyWord.length){ //()裡＝0、-0、null、NaN、undefined、空字串("")，值都會被初始化成false
   //   return alert('搜尋關鍵字不得為空白') //？？？跟直接alert有什麼不同
@@ -143,16 +255,28 @@ searchForm.addEventListener('submit', function searchSubmit(event){
   //     searchResults.push(movie)
   //   }
   // })
-  // renderMoviesList(searchResults)
+  // renderMovies(searchResults)
   // ＝＝＝＝ 方法二 ＝＝＝＝//
   //filter作用在array，會將array裡的項目丟入括號中的條件式(函數，會回傳T or F)判斷，為T的項目才會被保存，回傳值為一個陣列，包含所有T的項目
   searchResults = movies.filter( movie => movie.title.toLowerCase().includes(keyWord))
-  if (searchResults.length === 0 ){
+  if (!searchResults.length){
     return alert(`找不到跟${keyWord}相符的電影！`)
   }
+  renderMovies(getMoviesByPage(1))
   renderPaginator(searchResults.length)
-  renderMoviesList(getMoviesByPage(1))
 })
 
-
-
+modePanel.addEventListener("click", function clickModeBtn(event) {
+  const classList = event.target.classList;
+  if (classList.contains("card-mode")) {
+    mode = "card-mode";
+    cardModeBtn.classList.add("mode-active");
+    listModeBtn.classList.remove("mode-active");
+  }
+  if (classList.contains("list-mode")) {
+    mode = "list-mode";
+    listModeBtn.classList.add("mode-active");
+    cardModeBtn.classList.remove("mode-active");
+  }
+  renderMovies(getMoviesByPage(currPage));
+});
