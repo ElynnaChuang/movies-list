@@ -17,7 +17,7 @@ body {
   position: relative;
 }
 
-.add-to-favorite-in-card {
+.card-btn {
   align-items: center;
   position: absolute;
   top: 16px;
@@ -25,30 +25,40 @@ body {
   width: 48px;
   height: 48px;
   font-size: 24px;
-  color: #ff5b4d;
-  background-color: #fff;
-  border: none;
   border-radius: 8px;
+  border: none;
+  background-color: #fff;
   box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.2);
 }
 
-.add-to-favorite-in-list,
-.more-info-in-list {
+.all-list-btn{
+  display: flex;
+  justify-content: end;
+}
+
+.list-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
   margin-left: 12px;
-  text-align: center;
   border: none;
   border-radius: 4px;
   background-color: #fff;
   box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.2);
 }
 
-.add-to-favorite-in-list {
-  color: #ff5b4d;
+.add-to-favorite {
+  color: #ff6a06;
 }
 
-.more-info-in-list {
-  padding: 6px 17px;
+.more-info {
   color: #38bfe8;
+}
+
+.remove-favorite {
+  color: #f82a18;
 }
 
 .mode-btn {

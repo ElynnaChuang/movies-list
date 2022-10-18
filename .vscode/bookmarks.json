@@ -4,9 +4,44 @@
 			"path": "main.js",
 			"bookmarks": [
 				{
-					"line": 0,
+					"line": 19,
 					"column": 0,
-					"label": "const參數"
+					"label": "renderMovies"
+				},
+				{
+					"line": 72,
+					"column": 0,
+					"label": "isInFavorite"
+				},
+				{
+					"line": 79,
+					"column": 24,
+					"label": "getMoviesByPage"
+				},
+				{
+					"line": 90,
+					"column": 0,
+					"label": "renderPaginator"
+				},
+				{
+					"line": 137,
+					"column": 0,
+					"label": "showMovieModal"
+				},
+				{
+					"line": 156,
+					"column": 0,
+					"label": "addToFavorite"
+				},
+				{
+					"line": 180,
+					"column": 0,
+					"label": "favoriteIconStatus"
+				},
+				{
+					"line": 201,
+					"column": 0,
+					"label": "desideNumOfPage"
 				}
 			]
 		}

@@ -25,12 +25,12 @@ function renderMovies(data) {
       <div class="col-sm-3">
         <div class="mb-5">
           <div class="card">
-            <a href="#" class="d-flex btn add-to-favorite add-to-favorite-in-card" data-id="${
+            <a href="#" class="d-flex btn card-btn add-to-favorite" data-id="${
               el.id
             }">
               <i class="${isInFavorite(el)}" data-id="${el.id}"></i>
             </a>
-            <img src=${posterURL}${el.image} class="card-img-top more-info" alt="..." data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${el.id}">
+            <img src=${posterURL}${el.image} class="card-img-top img-more-info" alt="..." data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${el.id}">
             <div class="card-body" data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${el.id}">
               <h5 class="card-title">${el.title}</h5>
             </div>
@@ -50,11 +50,11 @@ function renderMovies(data) {
           <div class="container">
             <div class="row align-items-center">
               <div class="col">${el.title}</div>
-                <div class="col text-end">
-                  <a href="#" class=" btn more-info more-info-in-list" data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${el.id}">
+                <div class="col all-list-btn">
+                  <a href="#" class=" btn list-btn more-info" data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${el.id}">
                     <i class="fa-solid fa-info more-info" data-bs-toggle="modal" data-bs-target="#movie-modal" data-id="${el.id}"></i>
                   </a>
-                  <a href="#" data-id="${el.id}" class="btn add-to-favorite add-to-favorite-in-list">
+                  <a href="#" data-id="${el.id}" class="btn list-btn add-to-favorite">
                     <i data-id="${el.id}" class="${isInFavorite(el)}"></i>
                   </a>
                 </div>
@@ -93,9 +93,9 @@ function renderPaginator(amount){
   const pageAmmt = Math.ceil(amount / moviePerPage)
   let rawHTML = `
     <li class="page-control">
-      <a class="page-link" href="#" aria-label="Previous">
-        <span aria-hidden="true">
-          <i class="fa-solid fa-chevron-left pageMinus"></i>
+      <a class="page-link outside-scope" href="#" aria-label="Previous">
+        <span aria-hidden="true" class="outside-scope">
+          <i class="fa-solid fa-chevron-left previous"></i>
         </span>
       </a>
     </li>
@@ -112,9 +112,9 @@ function renderPaginator(amount){
   }
   rawHTML += `
     <li class="page-control">
-      <a class="page-link" href="#" aria-label="Next">
-        <span aria-hidden="true">
-          <i class="fa-solid fa-chevron-right pagePlus"></i>
+      <a class="page-link outside-scope" href="#" aria-label="Next">
+        <span aria-hidden="true" class="outside-scope">
+          <i class="fa-solid fa-chevron-right next"></i>
         </span>
       </a>
     </li>
@@ -140,7 +140,11 @@ function showMovieModal(id){
   const modalImage = document.querySelector('#movie-modal-image')
   const modalDate = document.querySelector('#movie-modal-date')
   const modalDescription = document.querySelector('#movie-modal-description')
-  axios.get(indexURL + id)
+  modalTitle.innerText = ''
+  modalDate.innerText = ''
+  modalDescription.innerText = ''
+  modalImage.innerHTML = ''
+  axios.get(moviesURL + id)
   .then(response => {
     const data = response.data.results
     modalTitle.innerText = data.title
@@ -150,10 +154,11 @@ function showMovieModal(id){
   })
 }
 
-function addToFavorite(id){
+function addToFavorite(id, event){
   //當function被呼叫時list會等於左或右邊，左邊為有清單，右邊為沒有，回傳兩者其一為T的，若兩者皆T，則左邊優先
   //localStorage本身存的是字串，所以取出時要用JSON.parse()，將 JSON 格式的字串轉回 JavaScript 原生物件
   const favoriteList = JSON.parse(localStorage.getItem("favoriteMovies")) || [];
+  event.preventDefault()//瀏覽器點到 <a href="#"...></a>預設行為想要找到「錨點」，但是因為沒有寫錨點（href="#"），所以就會跑到網頁的「最上方」
 
   //find()參數跟filter一樣為函式，為T，則執行，左邊movie是函式本身的參數，右邊id為addToFavorite(id)的id
   //find()回傳值為元素本身（例如：下面的movies.find，回傳值為movies裡符合條件的元素）
@@ -194,6 +199,20 @@ function favoriteIconStatus(target) {
   }
 }
 
+function desideNumOfPage (target, data) {
+  if (target.tagName === "A") {
+    currPage = Number(target.dataset.page);
+  }
+  if (target.classList.contains("next")) {
+    if (currPage >= Math.ceil(data.length / moviePerPage)) return;
+    currPage += 1;
+  }
+  if (target.classList.contains("previous")) {
+    if (currPage <= 1) return;
+    currPage -= 1;
+  }
+}
+
 
 axios.get(moviesURL)
 .then(response =>{
@@ -212,27 +231,22 @@ axios.get(moviesURL)
 .catch( (error) => console.log(error));
 
 moviesPanel.addEventListener('click', function (event){
-  if(event.target.classList.contains("more-info")) {
+  const classList = event.target.classList
+  if(classList.contains('more-info') || classList.contains('img-more-info')){
     //showMovieModal(id) 需要id是數字，但dataset裡的id是字串，所以需要轉換
     showMovieModal(Number(event.target.dataset.id))
   }else if(event.target.classList.contains("add-to-favorite")) {
-    addToFavorite(Number(event.target.dataset.id))
+    addToFavorite(Number(event.target.dataset.id), event)
   }
 })
 
 paginator.addEventListener('click', function onPaginatorClicked (event){
   const data = searchResults.length ? searchResults : movies;
-  if (event.target.tagName === "A") {
-    currPage = Number(event.target.dataset.page);
+  let target = event.target
+  if (event.target.classList.contains('outside-scope')){
+    target = event.target.firstElementChild.firstElementChild
   }
-  if (event.target.classList.contains("pagePlus")) {
-    if (currPage >= Math.ceil(data.length / moviePerPage)) return;
-    currPage += 1;
-  }
-  if (event.target.classList.contains("pageMinus")) {
-    if (currPage <= 1) return;
-    currPage -= 1;
-  }
+  desideNumOfPage(target, data)
   renderPageItemStatus(currPage);
   renderMovies(getMoviesByPage(currPage));
 })
@@ -242,10 +256,6 @@ searchPanel.addEventListener('submit', function searchSubmit(event){
   event.preventDefault() //請瀏覽器不要做預設的動作(因瀏覽器在感應到sumbit時，預設會重整，所以下方的console結果只會閃現一下)
   const keyWord = searchInput.value.trim().toLowerCase()
   searchHistory = searchResults.slice(0);
-  //過濾空白關鍵字，但後續拿掉，這樣查詢一次後，把輸入結果拿掉後按搜尋才可以回到全部
-  // if(!keyWord.length){ //()裡＝0、-0、null、NaN、undefined、空字串("")，值都會被初始化成false
-  //   return alert('搜尋關鍵字不得為空白') //？？？跟直接alert有什麼不同
-  // }
 
   //對比keyword 跟 movies[]裡的title，方法一是 forEach，方法二是 filter()，方法三是 for-of
   // ＝＝＝＝ 方法一 ＝＝＝＝ //
@@ -258,8 +268,9 @@ searchPanel.addEventListener('submit', function searchSubmit(event){
   // renderMovies(searchResults)
   // ＝＝＝＝ 方法二 ＝＝＝＝//
   //filter作用在array，會將array裡的項目丟入括號中的條件式(函數，會回傳T or F)判斷，為T的項目才會被保存，回傳值為一個陣列，包含所有T的項目
-  searchResults = movies.filter( movie => movie.title.toLowerCase().includes(keyWord))
+  searchResults = movies.filter((movie) =>movie.title.toLowerCase().trim().includes(keyWord));
   if (!searchResults.length){
+    searchResults = searchHistory;
     return alert(`找不到跟${keyWord}相符的電影！`)
   }
   renderMovies(getMoviesByPage(1))

@@ -27,13 +27,13 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item active">
-                <a class="nav-link" href="index.html">Home
-                    <span class="visually-hidden">(current)</span>
-                </a>
-                </li>
                 <li class="nav-item">
-                <a class="nav-link" href="#">Favorite</a>
+                    <a class="nav-link" href="index.html">Home
+                        <span class="visually-hidden">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Favorite</a>
                 </li>
             </ul>
         </div>
@@ -44,6 +44,12 @@
             <!-- Render Movies' Data -->
         </div>
     </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center" id="paginator">
+        </ul>
+    </nav>
 
     <!-- Modal -->
     <div class="modal fade" id="movie-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
